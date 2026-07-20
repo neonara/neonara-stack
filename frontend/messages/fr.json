@@ -1,0 +1,6 @@
+{
+  "common": { "loading": "Chargement…", "save": "Enregistrer", "cancel": "Annuler", "error": "Une erreur est survenue" },
+  "auth": { "login": "Se connecter", "logout": "Se déconnecter", "email": "Adresse email", "password": "Mot de passe", "forgotPassword": "Mot de passe oublié ?" },
+  "nav": { "dashboard": "Tableau de bord", "settings": "Paramètres" },
+  "dashboard": { "welcome": "Bon retour, {name}" }
+}

@@ -1,0 +1,91 @@
+name: Code Quality
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SonarCloud static analysis (backend + frontend).
+#
+# NOT FUNCTIONAL YET — requires two things this workflow can't set up on its
+# own:
+#   1. A SonarCloud organization: sign up at https://sonarcloud.io with your
+#      GitHub account, then replace every `YOUR_SONARCLOUD_ORG` below with the
+#      real organization key.
+#   2. A `SONAR_TOKEN` repo secret (Settings → Secrets and variables →
+#      Actions), generated from SonarCloud → My Account → Security.
+# Until both are done, both jobs below will fail on the SonarCloud Scan step.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sonar-backend:
+    name: SonarCloud — Backend
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings.test
+      SECRET_KEY: ci-sonar-secret-key
+      POSTGRES_DB: neonara
+      POSTGRES_USER: neonara
+      POSTGRES_PASSWORD: neonara
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history for blame info
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps and run tests
+        run: |
+          pip install -r backend/requirements/test.txt
+          cd backend
+          pytest --cov=apps --cov=core --cov-report=xml:coverage.xml
+        continue-on-error: true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: backend
+          args: >
+            -Dsonar.projectKey=neonara-stack-backend
+            -Dsonar.organization=YOUR_SONARCLOUD_ORG
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+
+  sonar-frontend:
+    name: SonarCloud — Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and test
+        run: |
+          cd frontend
+          npm install
+          npx vitest run --coverage --passWithNoTests
+        continue-on-error: true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: frontend
+          args: >
+            -Dsonar.projectKey=neonara-stack-frontend
+            -Dsonar.organization=YOUR_SONARCLOUD_ORG
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info

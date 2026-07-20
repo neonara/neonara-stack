@@ -1,0 +1,6 @@
+{
+  "common": { "loading": "Loading…", "save": "Save", "cancel": "Cancel", "error": "An error occurred" },
+  "auth": { "login": "Sign in", "logout": "Sign out", "email": "Email address", "password": "Password", "forgotPassword": "Forgot password?" },
+  "nav": { "dashboard": "Dashboard", "settings": "Settings" },
+  "dashboard": { "welcome": "Welcome back, {name}" }
+}

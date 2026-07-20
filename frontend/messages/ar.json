@@ -1,0 +1,6 @@
+{
+  "common": { "loading": "جاري التحميل…", "save": "حفظ", "cancel": "إلغاء", "error": "حدث خطأ" },
+  "auth": { "login": "تسجيل الدخول", "logout": "تسجيل الخروج", "email": "البريد الإلكتروني", "password": "كلمة المرور", "forgotPassword": "نسيت كلمة المرور؟" },
+  "nav": { "dashboard": "لوحة التحكم", "settings": "الإعدادات" },
+  "dashboard": { "welcome": "مرحباً بعودتك، {name}" }
+}
